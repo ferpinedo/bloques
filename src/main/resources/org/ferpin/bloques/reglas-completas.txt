@@ -1,0 +1,75 @@
+# REGLAS DE COMPILADOR #
+
+CONCEPTOS CLAVES: orden, Si, Entonces, objeto, piso, nada
+
+Relacionar -> assert
+Separar -> retract
+
+Entidad -> Variables (X, Y, Z, ...)
+
+Reglas:
+1. Se deben de declarar las características y estados de las entidades
+2. Se deben de declarar las capacidades (operaciones o acciones) de las entidades
+3. Se deben de declarar las reglas (condiciones)
+
+Opcional: se puede usar #<contenido># para ignorar contenido
+
+
+
+
+# REGLAS DE ESCENARIO 1#
+
+# ESTADOS #
+un objeto puede estar encima de otro objeto :-dynamic encima/2
+los objetos pueden tener tamaño :-dynamic size/2
+los objetos pueden tener color :-dynamic color/2
+los objetos pueden ser un tipo de figura :-dynamic figureType/2
+
+# un objeto puede estar encima del piso #
+# nada puede estar encima de un objeto #
+
+# ACCIONES #
+Limpiar un objeto 
+    separar x de cualquier objeto anidado con predicado sobre -> retract(sobre(_, X))
+    relacionar nada con X con predicado sobre -> assert(sobre(nada, X))
+Una acción es limpiar, que separa un objeto de cualquier otra entidad y relaciona nada encima de él
+
+Poner el objeto X sobre Y
+    relacionar Y con X con predicado sobre -> assert(sobre(Y, X))
+Una acción es poner, que relaciona un objeto encima de él -> assert(sobre(EL, OBJETO))
+
+
+# REGLAS #
+
+Si
+    La orden es quitar el objeto Y del objeto X 
+    El objeto Y está encima del objeto X
+    El objeto Y está vacío
+Entonces 
+    Poner el objeto Y en el piso
+    Limpiar el objeto X
+ 
+Si
+    La orden es quitar el objeto X sobre el objeto Y 
+    El objeto X está encima del objeto Y
+    El objeto Z está encima del objeto X
+Entonces
+    La orden es quitar el objeto Z del objeto X
+
+Si
+    La orden es colocar el objeto X sobre el objeto Y
+    El objeto X esta vaío
+    El objeto Y esta vacío
+    El objeto Y está en el piso
+Entonces
+    Poner el objeto Y sobre X
+    Limpiar el piso
+
+    
+# ESCENA INICIAL PARA ESCENARIO 1 #
+Existe un cubo azul grande sobre el piso.
+Arriba del cubo azul grande se encuentra el cubo rojo mediano
+Arriba del cubo rojo mediana esta una caja chica amarilla cerrada
+Arriba de la caja chica amarilla no existen objetos 
+Existe un cilindro amarillo grande sobre el piso 
+Arriba del cilindro amarillo grande no existen objetos

@@ -1,0 +1,78 @@
+Document: ID=sample-spanish.txt (2 sentences, 18 tokens)
+
+Sentence #1 (9 tokens):
+El presidente Barack Obama fue elegido en 2008.
+
+Tokens:
+[Text=El CharacterOffsetBegin=0 CharacterOffsetEnd=2 PartOfSpeech=DET Lemma=el NamedEntityTag=O]
+[Text=presidente CharacterOffsetBegin=3 CharacterOffsetEnd=13 PartOfSpeech=NOUN Lemma=presidente NamedEntityTag=TITLE]
+[Text=Barack CharacterOffsetBegin=14 CharacterOffsetEnd=20 PartOfSpeech=PROPN Lemma=barack NamedEntityTag=PERSON]
+[Text=Obama CharacterOffsetBegin=21 CharacterOffsetEnd=26 PartOfSpeech=PROPN Lemma=obama NamedEntityTag=PERSON]
+[Text=fue CharacterOffsetBegin=27 CharacterOffsetEnd=30 PartOfSpeech=AUX Lemma=fue NamedEntityTag=O]
+[Text=elegido CharacterOffsetBegin=31 CharacterOffsetEnd=38 PartOfSpeech=VERB Lemma=elegido NamedEntityTag=O]
+[Text=en CharacterOffsetBegin=39 CharacterOffsetEnd=41 PartOfSpeech=ADP Lemma=en NamedEntityTag=O]
+[Text=2008 CharacterOffsetBegin=42 CharacterOffsetEnd=46 PartOfSpeech=NUM Lemma=2008 NamedEntityTag=NUMBER NormalizedNamedEntityTag=2008.0]
+[Text=. CharacterOffsetBegin=46 CharacterOffsetEnd=47 PartOfSpeech=PUNCT Lemma=. NamedEntityTag=O]
+
+Constituency parse: 
+(ROOT
+  (sentence (DET El) (NOUN presidente) (PROPN Barack) (PROPN Obama)
+    (sn
+      (grup.nom (AUX fue)))
+    (VERB elegido) (ADP en) (NUM 2008) (PUNCT .)))
+
+
+Dependency Parse (enhanced plus plus dependencies):
+root(ROOT-0, elegido-6)
+det(presidente-2, El-1)
+nsubj(elegido-6, presidente-2)
+appos(presidente-2, Barack-3)
+name(Barack-3, Obama-4)
+aux(elegido-6, fue-5)
+case(2008-8, en-7)
+advmod(elegido-6, 2008-8)
+punct(elegido-6, .-9)
+
+Extracted the following NER entity mentions:
+presidente	TITLE
+Barack Obama	PERSON
+2008	NUMBER
+
+Extracted the following KBP triples:
+1.0	Barack Obama	per:title	presidente
+
+Sentence #2 (9 tokens):
+Él hizo campaña en muchos estados incluyen California.
+
+Tokens:
+[Text=Él CharacterOffsetBegin=48 CharacterOffsetEnd=50 PartOfSpeech=PRON Lemma=él NamedEntityTag=O]
+[Text=hizo CharacterOffsetBegin=51 CharacterOffsetEnd=55 PartOfSpeech=VERB Lemma=hizo NamedEntityTag=O]
+[Text=campaña CharacterOffsetBegin=56 CharacterOffsetEnd=63 PartOfSpeech=NOUN Lemma=campaña NamedEntityTag=O]
+[Text=en CharacterOffsetBegin=64 CharacterOffsetEnd=66 PartOfSpeech=ADP Lemma=en NamedEntityTag=O]
+[Text=muchos CharacterOffsetBegin=67 CharacterOffsetEnd=73 PartOfSpeech=DET Lemma=muchos NamedEntityTag=O]
+[Text=estados CharacterOffsetBegin=74 CharacterOffsetEnd=81 PartOfSpeech=NOUN Lemma=estados NamedEntityTag=O]
+[Text=incluyen CharacterOffsetBegin=82 CharacterOffsetEnd=90 PartOfSpeech=VERB Lemma=incluyen NamedEntityTag=O]
+[Text=California CharacterOffsetBegin=91 CharacterOffsetEnd=101 PartOfSpeech=PROPN Lemma=california NamedEntityTag=STATE_OR_PROVINCE]
+[Text=. CharacterOffsetBegin=101 CharacterOffsetEnd=102 PartOfSpeech=PUNCT Lemma=. NamedEntityTag=O]
+
+Constituency parse: 
+(ROOT
+  (sentence (PRON Él) (VERB hizo) (NOUN campaña) (ADP en)
+    (sn
+      (grup.nom (DET muchos)))
+    (NOUN estados) (VERB incluyen) (PROPN California) (PUNCT .)))
+
+
+Dependency Parse (enhanced plus plus dependencies):
+root(ROOT-0, hizo-2)
+nsubj(hizo-2, Él-1)
+dobj(hizo-2, campaña-3)
+case(estados-6, en-4)
+det(estados-6, muchos-5)
+nmod(hizo-2, estados-6)
+advcl(hizo-2, incluyen-7)
+dobj(incluyen-7, California-8)
+punct(hizo-2, .-9)
+
+Extracted the following NER entity mentions:
+California	STATE_OR_PROVINCE

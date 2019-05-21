@@ -1,0 +1,14 @@
+# ESTADOS #
+Un objeto puede estar encima de otro objeto.
+Los objetos pueden tener tamaño.
+Los objetos pueden tener color.
+Los objetos pueden ser un tipo de figura.
+
+# un objeto puede estar encima del piso #
+# nada puede estar encima de un objeto #
+
+
+# ACCIONES #
+Una acción es limpiar, que separa un objeto de cualquier otra entidad y relaciona nada encima de él
+Una acción es poner, que relaciona un objeto encima de él
+
