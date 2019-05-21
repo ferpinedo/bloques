@@ -1,0 +1,68 @@
+Estados
+un aro puede pertenecer a una torre
+un aro puede tener distinto tamaño
+un aro puede estar en la cima de una torre
+
+Acciones
+una accion es poner un aro en una torre
+una accion es poner el aro en la cima de una torre
+una accion es quitar un aro de una torre
+una accion es quitar un aro de la cima de una torre
+
+Reglas
+si
+    la orden es quitar un aro de una torre
+entonces
+    desvincular aro de la torre a la que pertenecía
+
+si
+    la orden es quitar aro de la cima de una torre
+entonces
+    desvincular aro de la torre sobre la que estaba en la cima
+
+si
+    la orden es poner un aro en una torre
+entonces
+    vincular aro a la torre
+
+si
+    la orden es poner aro en la cima de una torre
+entonces
+    vincular aro sobre la cima de la torre
+
+si
+    la orden es pasar aro A hacia torre T
+    aro A pertenece a torre R
+entonces
+    quitar aro A de torre R
+    quitar aro A de la cima de la torre R
+    poner aro A en la torre T
+    poner aro A en la cima de la torre T
+
+si
+    la orden es mover un aro de una torre X a una torre Y
+    #    el aro esta en la cima de la torre X
+    la torre Y esta vacía
+entonces
+    pasar aro hacia torre X
+
+
+si
+    la orden es mover un aro V de una torre X a una torre Y
+    el aro V esta en la cima de la torre X
+    la torre Y tiene en la cima un aro Z
+    al aro Z es más grande que el aro V
+entonces
+    pasar aro V hacia torre Y
+    quitar aro Z de la cima de la torre Y
+
+
+
+    HACER PROCEDIMIENTO, PASOS 1, 2, 3, ...
+    PONER ARO QUE ESTA ABAJO EN LA CIMA DE LA TORRE QUE SE QUEDO SIN EL ARO A MOVER
+
+
+
+
+si la orden es mover todos los aros de una torre a otra
+

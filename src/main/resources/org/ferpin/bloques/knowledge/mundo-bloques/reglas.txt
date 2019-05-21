@@ -1,0 +1,78 @@
+CARACTERÍSTICAS Y ESTADOS
+un bloque puede estar encima de otro bloque :-dynamic encima/2
+los bloques pueden tener tamaño :-dynamic size/2
+los bloques pueden tener color :-dynamic color/2
+los bloques pueden ser un tipo de prisma :-dynamic figureType/2
+
+#  un bloque puede estar encima del piso
+#  vacío puede estar encima de un bloque
+
+
+#####################
+# REGLAS PRIMITIVAS #
+#####################
+
+1. Quitar bloque de entidad  #(bloque o piso)
+2. Poner bloque sobre de entidad #(bloque, o piso)
+
+1. Si la regla es Vaciar bloque X ->  desvincular bloque de cualquier entidad sobre la que esté puesto
+2. Si la regla es Poner bloque X sobre entidad Y -> vincular bloque X sobre entidad Y
+
+Si
+    La orden es quitar el bloque X del bloque Y
+    El bloque Y no es piso
+Entonces
+    #    Quitar bloque X de bloque Y
+    Vaciar bloque Y
+
+# SI  la orden es limpiar el bloque X del piso  ENTONCES  borrar la relacion de sobre del bloque x con el piso
+
+# Si
+#    la orden es limpiar el bloque X del bloque Y
+#    el bloque Y no es el piso
+# Entonces
+#    borrar la relacion de "encima de" del bloque X con el bloque Y
+#    agregar relacion de "sobre de" de nada con el bloque Y
+
+
+# si
+#     la orden es poner el bloque X encima del piso
+# Entonces
+#     agregar la relacion de "encima de" del bloque X con el piso
+
+
+# si
+#     la orden es poner el bloque X encima del bloque Y
+# Entonces
+#     agregar la relacion de "encima de" del bloque X con el bloque Y
+#     borrar relacion de "sobre de" de nada con el bloque X
+
+
+# REGLAS #
+
+Si
+    La orden es quitar el bloque Y del bloque X
+    El bloque Y está encima del bloque X
+    El bloque Y está vacío
+Entonces
+    Limpiar el bloque X
+    Poner el bloque Y en el piso
+
+Si
+    La orden es quitar el bloque X del bloque Y
+    El bloque X está encima del bloque Y
+    El bloque Z está encima del bloque X
+Entonces
+    Quitar el bloque Z del bloque X
+    Quitar el bloque X del bloque Y
+
+
+Si
+    La orden es colocar el bloque X sobre el bloque Y
+    El bloque X esta vacío
+    El bloque Y esta vacío
+    El bloque Y está sobre el piso
+Entonces
+    Poner el bloque Y sobre X
+    limpiar el bloque Y del piso
+    limpiar nada del bloque X
