@@ -1,34 +1,33 @@
 package org.ferpin.bloques;
 
-import org.ferpin.bloques.nlp.NLInterpreter;
-import org.ferpin.bloques.nlp.PrologTranslator;
-import org.ferpin.bloques.prolog.Program;
-import org.ferpin.bloques.util.Files;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.ferpin.bloques.prolog.Puppeteer;
 
-import java.io.IOException;
+import java.net.URL;
 
-
-public class Main {
+public class Main extends Application {
     public static void main(String[] args) {
-        String programName = "mundo bloques";
-        String author = "Fernanod Pinedo";
-        String rulesFilePath = Main.class.getResource("knowledge/mundo-bloques/reglas.txt").getPath();
-        String stageFilePath = Main.class.getResource("knowledge/mundo-bloques/escenario1.txt").getPath();
-        try {
-            NLInterpreter.setNlpPropertiesPath(Main.class.getResource("Custom-StanfordCoreNLP-spanish.properties").getPath());
-            String rulesText = Files.readEverythingFromFile(rulesFilePath);
-            String stageText = Files.readEverythingFromFile(stageFilePath);
+        launch(args);
+    }
 
-            Program prologProgram = new Program(programName, author);
-            PrologTranslator translator = new PrologTranslator(prologProgram);
-            translator.translateRules(rulesText);
-            translator.translateStage(stageText);
+    public void start(Stage primaryStage) throws Exception {
+//        Puppeteer.simpleQuery("clean");
+//        System.out.println( "Consult: " + (Puppeteer.consult(getClass().getResource("expert-system.pl").getPath()) ? "True" : "False"));
+//        System.out.println("Read lines: " + Puppeteer.run("loadRules", getClass().getResource("rulesEnfermedadesUno.txt").getPath()));
+//        Puppeteer.run("initRules");
 
-            prologProgram.consult();
+        primaryStage.setTitle("Sistema Experto");
+        URL url = Main.class.getResource("view/Main.fxml");
+        FXMLLoader fxmlLoader = new FXMLLoader(url);
+        Parent parent = fxmlLoader.load();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Scene scene = new Scene(parent);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
-

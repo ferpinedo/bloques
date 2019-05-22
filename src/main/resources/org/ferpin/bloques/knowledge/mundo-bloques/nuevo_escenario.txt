@@ -1,8 +1,0 @@
-# ESCENA INICIAL PARA ESCENARIO 1 #
-
-Existe un cubo azul grande sobre el piso.
-Arriba del cubo azul grande se encuentra el cubo rojo mediano
-Arriba del cubo rojo mediana esta una caja chica amarilla cerrada
-Arriba de la caja chica amarilla no existen objetos
-Existe un cilindro amarillo grande sobre el piso
-Arriba del cilindro amarillo grande no existen objetos

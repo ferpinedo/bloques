@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ferpin.bloques.controller.MainController">
+   <children>
+      <Label text="Programa generado" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="120.0">
+         <font>
+            <Font name="Arial Bold" size="17.0" />
+         </font>
+      </Label>
+      <JFXTextArea fx:id="txtCode" editable="false" focusColor="#40a877" layoutX="60.0" layoutY="241.0" prefHeight="459.0" prefWidth="400.0" promptText="Seleccione un archivo que contenga las reglas y uno que contenga el escenario inicial. Después de clic en traducir." style="-fx-border-color: black; -fx-border-width: .05; -fx-background-color: #FFFFFF;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="145.0" />
+      <Label text="Sistema basado en conocimiento" textFill="#2a7551" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font name="Arial Bold" size="30.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER_LEFT" layoutX="60.0" layoutY="110.0" prefHeight="36.0" prefWidth="1040.0" spacing="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="411.0" spacing="10.0">
+               <children>
+                  <Label prefHeight="29.0" prefWidth="48.0" text="Reglas">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <JFXTextField fx:id="txtRulesFile" editable="false" focusColor="#40a877" onMouseReleased="#handleRulesFile" prefHeight="27.0" prefWidth="317.0" />
+               </children>
+            </HBox>
+            <HBox prefHeight="93.0" prefWidth="429.0" spacing="10.0">
+               <children>
+                  <Label prefHeight="29.0" prefWidth="72.0" text="Escenario">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <JFXTextField fx:id="txtStageFile" editable="false" focusColor="#40a877" onMouseReleased="#handleStageFile" prefHeight="27.0" prefWidth="317.0" />
+               </children>
+            </HBox>
+            <JFXButton defaultButton="true" onAction="#handleTranslate" prefHeight="38.0" prefWidth="103.0" ripplerFill="#9ea39d" style="-fx-border-radius: 5; -fx-background-color: #eaeaea; -fx-background-radius: 5; -fx-border-width: 0.5; -fx-text-fill: #40a877 #40a877;" text="TRADUCIR">
+               <font>
+                  <Font name="Arial Black" size="13.0" />
+               </font>
+            </JFXButton>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="120.0" prefHeight="36.0" prefWidth="535.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <JFXTextField fx:id="txtCommand" focusColor="#40a877" prefHeight="27.0" prefWidth="387.0" promptText="Comando" />
+            <JFXButton defaultButton="true" onAction="#handleSend" prefHeight="38.0" prefWidth="103.0" ripplerFill="#a49d9d" style="-fx-border-radius: 5; -fx-background-color: #eaeaea; -fx-background-radius: 5; -fx-border-width: 0.5; -fx-text-fill: #40a877 #40a877;" text="ENVIAR">
+               <font>
+                  <Font name="Arial Black" size="13.0" />
+               </font>
+            </JFXButton>
+         </children>
+      </HBox>
+      <Label layoutX="10.0" layoutY="10.0" text="Consola de ejecución" AnchorPane.leftAnchor="450.0" AnchorPane.topAnchor="120.0">
+         <font>
+            <Font name="Arial Bold" size="17.0" />
+         </font>
+      </Label>
+      <JFXTextArea fx:id="txtConsoleOutput" editable="false" focusColor="#40a877" layoutX="70.0" layoutY="251.0" prefHeight="300.0" prefWidth="0.0" style="-fx-border-color: black; -fx-border-width: .05; -fx-background-color: #000; -fx-text-fill: yellow;" unFocusColor="WHITE" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="145.0">
+         <font>
+            <Font name="Courier New" size="13.0" />
+         </font>
+      </JFXTextArea>
+      <ProgressIndicator fx:id="progressIndicator" layoutX="990.0" layoutY="90.0" prefHeight="40.0" prefWidth="37.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+</AnchorPane>
