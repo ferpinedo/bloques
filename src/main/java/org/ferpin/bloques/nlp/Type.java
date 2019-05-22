@@ -1,5 +1,5 @@
 package org.ferpin.bloques.nlp;
 
 public enum Type {
-    ENTITY, STATE
+    ENTITY, STATE, RULE
 }

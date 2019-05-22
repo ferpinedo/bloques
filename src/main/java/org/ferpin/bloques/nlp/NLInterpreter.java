@@ -9,6 +9,7 @@ import edu.stanford.nlp.util.CoreMap;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 public class NLInterpreter {
@@ -59,7 +60,7 @@ public class NLInterpreter {
         return "";
     }
 
-    public static HashMap<String, String> cleanSentence(String originalText){
+    public static LinkedHashMap<String, String> cleanSentence(String originalText){
         System.out.println("ORIGINAL TEXT: " + originalText);
 
         Annotation document = new Annotation(originalText);
@@ -69,25 +70,21 @@ public class NLInterpreter {
         System.out.print("CLEANED TEXT: ");
         CoreMap sentence = document.get(CoreAnnotations.SentencesAnnotation.class).get(0);
 
-        HashMap<String, String> tokens = new HashMap<>();
+        LinkedHashMap<String, String> tokens = new LinkedHashMap<>();
         for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
             String word = token.get(CoreAnnotations.TextAnnotation.class);
             String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
             if(isItWorth(word, posTag)) {
                 tokens.put(word, posTag);
-                System.out.print(word + " (" + posTag + "), ");
             }
         }
-        System.out.println();
+        System.out.println(tokens.entrySet());
 
         return tokens;
     }
 
     private static boolean isItWorth(String word, String pos) {
-//        if (word.toLowerCase().equals("si")) // exceptions: "si"
-//            return true;
-
         if (word.length() == 1 && !pos.equals("PUNCT")) // exceptions: words of one letter as "a", "y", "u", ...
             return true;
 
@@ -102,25 +99,4 @@ public class NLInterpreter {
         return text.replaceAll("(?<!\\S)" + oldWord + "(?!\\S)", newWord);
     }
 
-//    private String clean() {
-//        StringBuilder cleanedLines = new StringBuilder();
-//        String lines[] = originalText.split("\\r?\\n");
-//
-//        for (String line: lines) {
-//            if (line.isEmpty() || line.charAt(0) == '#')
-//                continue;
-//
-//            if (line.charAt(line.length() - 1) != '.')
-//                line = line + ". ";
-//
-//            line = replaceWord(line,"X", "X "); //TODO: otras letras tambien Y, Z, W
-////            line = replaceWord(line,"X", "Xobjetct");
-////            line = replaceWord(line,"X", "Xobjetct");
-//
-//            cleanedLines.append(line);
-//        }
-//
-//
-//        return cleanedLines.toString();
-//    }
 }

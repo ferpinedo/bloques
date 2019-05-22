@@ -33,7 +33,7 @@ public class Rule extends Clause {
 
     @Override
     public String toString() {
-        StringBuilder rule = new StringBuilder(super.toString() + ":-");
+        StringBuilder rule = new StringBuilder(super.toString() + ":-\n");
         for (int i = 0; i < bodyClauses.size() - 1; i++) {
             rule.append(bodyClauses.get(i)).append(",\n");
         }

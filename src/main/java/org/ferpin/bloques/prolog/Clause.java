@@ -8,6 +8,7 @@ public class Clause {
     private ArrayList<String> bodyClauses;
 
     public Clause() {
+        this.bodyClauses = new ArrayList<>();
     }
 
     public Clause(String name) {

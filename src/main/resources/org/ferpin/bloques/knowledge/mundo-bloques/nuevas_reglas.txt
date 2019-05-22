@@ -18,81 +18,66 @@ Si
 Entonces
     Desvincular bloque X de la entidad Z sobre la que está puesto
 
-#   # Si
-#   #     La orden es Vaciar bloque X
-#   # Entonces
-#   #     Desvincular bloque X de cualquier entidad que esté sobre él
-#
-#
-#   # Si
-#   #     La orden es Bajar bloque Y de bloque X
-#   # Entonces
-#   #     Poner el bloque Y en el piso
-#   #     Vaciar el bloque X
-#
-#
-#   # QUITAR
-#   Si
-#       La orden es quitar el bloque Y del bloque X
-#       El bloque Y está encima del bloque X
-#       El bloque Y no tiene nada sobre él
-#   Entonces
-#       Poner el bloque Y en el piso
-#       Sacar el bloque X
-#
-#   Si
-#       La orden es quitar el bloque Y del bloque X
-#       El bloque Y está encima del bloque X
-#       El bloque Z está encima del bloque Y
-#   Entonces
-#       Quitar bloque Z del bloque Y
-#       Quitar bloque Y de bloque X
-#
-#
-#   # COLOCAR
-#
-#   # Si
-#   #     la orden es colocar bloque Y sobre bloque X
-#   #     no hay nada sobre el bloque Y
-#   #     no hay nada sobre el bloque x
-#   #     el bloque Y está sobre el piso
-#   # Entonces
-#   #     quitar bloque Y del piso
-#   #     poner bloque Y sobre X
-#
-#   # Si
-#   #     la orden es colocar bloque Y sobre bloque X
-#   #     no hay nada sobre el bloque Y
-#   #     no hay nada sobre el bloque x
-#   #     el bloque Y está sobre la entidad Z
-#   #     la entidad Z no es el piso
-#   # Entonces
-#   #     quitar bloque Y de Z
-#   #     poner bloque Y sobre X
-#
-#   Si
-#       la orden es colocar bloque Y sobre bloque X
-#       no hay nada sobre el bloque Y
-#       no hay nada sobre el bloque X
-#       el bloque Y está sobre la entidad Z
-#   Entonces
-#       quitar bloque Y de la entidad Z
-#       poner bloque Y sobre X
-#
-#   Si
-#       la orden es colocar bloque Y sobre bloque X
-#       no hay nada sobre el bloque X
-#       sobre el bloque Y hay un bloque Z
-#   Entonces
-#       quitar bloque Z de Y
-#       colocar bloque Y sobre X
-#
-#   Si
-#       la orden es colocar bloque Y sobre bloque X
-#       el bloque X tiene encima un bloque W
-#       sobre el bloque Y hay un bloque Z
-#   Entonces
-#       quitar bloque W de X
-#       quitar bloque Z de Y
-#       colocar bloque Y sobre X
+
+#  QUITAR
+Si
+    La orden es quitar el bloque Y del bloque X
+    El bloque Y está sobre el bloque X
+    El bloque Y no tiene nada sobre él
+Entonces
+    Poner el bloque Y sobre el piso
+    Sacar el bloque Y de X
+Si
+    La orden es quitar el bloque Y del bloque X
+    El bloque Y está sobre del bloque X
+    El bloque Z está sobre del bloque Y
+Entonces
+    Quitar bloque Z del bloque Y
+    Quitar bloque Y de bloque X
+
+
+# COLOCAR
+# Si
+#     la orden es colocar bloque Y sobre bloque X
+#     no hay nada sobre el bloque Y
+#     no hay nada sobre el bloque x
+#     el bloque Y está sobre el piso
+# Entonces
+#     quitar bloque Y del piso
+#     poner bloque Y sobre X
+# Si
+#     la orden es colocar bloque Y sobre bloque X
+#     no hay nada sobre el bloque Y
+#     no hay nada sobre el bloque x
+#     el bloque Y está sobre la entidad Z
+#     la entidad Z no es el piso
+# Entonces
+#     quitar bloque Y de Z
+#     poner bloque Y sobre X
+
+Si
+    la orden es colocar bloque Y sobre bloque X
+    no hay nada sobre el bloque Y
+    no hay nada sobre el bloque X
+    el bloque Y está sobre la entidad Z
+Entonces
+    quitar bloque Y de la entidad Z
+    poner bloque Y sobre X
+Si
+    la orden es colocar bloque Y sobre bloque X
+    no hay nada sobre el bloque X
+    hay un bloque Z sobre el bloque Y
+# sobre el bloque Y hay un bloque Z
+Entonces
+    quitar bloque Z de Y
+    colocar bloque Y sobre X
+Si
+    la orden es colocar bloque Y sobre bloque X
+    el bloque W esta sobre el bloque X
+# el bloque X tiene encima un bloque W
+    hay un bloque Z sobre el bloque Y
+Entonces
+    quitar bloque W de X
+    quitar bloque Z de Y
+    colocar bloque Y sobre X
 
