@@ -8,6 +8,8 @@ import org.ferpin.bloques.prolog.PrologProgram;
 import org.ferpin.bloques.prolog.Rule;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PrologTranslator {
     private HashMap<Type, ArrayList<String>> learnedWords;
@@ -86,7 +88,6 @@ public class PrologTranslator {
     private void identfyRuleHeader(String line, Rule rule) {
         HashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
         System.out.print("TRANSLATING RULE HEADER: ");
-        String ruleName = "";
         ArrayList<String> variables = new ArrayList<>();
         for (Map.Entry<String, String> token: tokens.entrySet()) {
             String word = token.getKey();
@@ -102,14 +103,14 @@ public class PrologTranslator {
                 continue;
 
             if (posTag.equals("VERB")) {
-                ruleName = word;
+                rule.setName(word);
             } else {
                 variables.add(word);
             }
 
             System.out.print(" " + word + "(" + posTag + ")");
         }
-        rule = new Rule(ruleName, variables.toArray(new String[0]));
+        rule.setArguments(variables);
 
         System.out.println("   RESULT: " + rule.getName() + "\n");
     }
@@ -140,37 +141,64 @@ public class PrologTranslator {
     private void translateAction(String line, Rule rule) {
         HashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
         System.out.print("TRANSLATING RULE ACTION: ");
-        String ruleName = "";
+//        Clause clause = new Clause();
+        Clause clause = null;
+        String clauseName = "";
         ArrayList<String> variables = new ArrayList<>();
+        PrologKey key = null;
         for (Map.Entry<String, String> token: tokens.entrySet()) {
             String word = token.getKey();
             String posTag = token.getValue();
 
+            if (lookFor(word, Dictionary.Synonyms.ATTACH)) {
+                key = PrologKey.ATTACH;
+                continue;
+            }
+
+            if (lookFor(word, Dictionary.Synonyms.DETACH)) {
+                key = PrologKey.DETACH;
+                continue;
+            }
+
+            if (lookFor(word, learnedWords.get(Type.STATE).toArray(new String[0]))) {  //TODO: also search synonyms of learned words
+                clauseName = word;
+            }
+
+            // first filter
             if (lookFor(word, Dictionary.Synonyms.BE, Dictionary.Synonyms.ENTITY, Dictionary.EXCEPTIONS,
                     learnedWords.get(Type.ENTITY).toArray(new String[0]))
                     || posTag.equals("AUX") || posTag.equals("PRON")) {
                 continue;
             }
 
+            // second filter
             if (lookFor(word, Dictionary.Synonyms.RULE)|| posTag.equals("ADP"))
                 continue;
 
-            if (posTag.equals("VERB")) {
-                ruleName = word;
-            } else {
+            if (lookForExactWord(word, rule.getArguments().toArray(new String[0]))) {
                 variables.add(word);
             }
-
             System.out.print(" " + word + "(" + posTag + ")");
         }
-        rule = new Rule(ruleName, variables.toArray(new String[0]));
 
-        System.out.println("   RESULT: " + rule.getName() + "\n");
+        if (key != null) {
+            if (key == PrologKey.ATTACH) {
+                clause = new Clause("assert", (new Clause(clauseName, variables.toArray(new String[0]))).toString() );
+            }
+            if (key == PrologKey.DETACH) {
+                clause = new Clause("retract", (new Clause(clauseName, variables.toArray(new String[0]))).toString() );
+            }
+        }
+        System.out.println("   RESULT: " + clause.toString() + "\n");
+        rule.addBodyClause(clause);
     }
+
+
+    //TODO: translateArithmeticOperation
 
     private void translateRule(Queue<String> lines) {
         boolean onActionSection = false;
-        Rule rule = null;
+        Rule rule = new Rule();
 
         while(!lines.isEmpty()) {
             String line = lines.peek();
@@ -198,6 +226,8 @@ public class PrologTranslator {
                 translateAction(line, rule);
             }
         }
+
+        System.out.println("RULE TRANSLATED: " + rule);
 
         prologProgram.addRule(rule);
     }
@@ -261,7 +291,7 @@ public class PrologTranslator {
 
     private boolean lookFor(String line, String ...wordsToLookFor) {
         for (String word: wordsToLookFor) {
-            if (line.contains(word))
+            if (contains(line, word))
                 return true;
         }
         return false;
@@ -270,11 +300,45 @@ public class PrologTranslator {
     private boolean lookFor(String line, String[] ...wordsToLookFor) {
         for (String[] words: wordsToLookFor) {
             for (String word: words) {
-                if (line.contains(word))
+                if (contains(line, word))
                     return true;
             }
         }
         return false;
+    }
+
+
+
+    private boolean contains(String source, String subItem){
+        String pattern = "\\b" + subItem;
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(source);
+        return m.find();
+    }
+
+    private boolean lookForExactword(String line, String ...wordsToLookFor) {
+        for (String word: wordsToLookFor) {
+            if (containsExactWord(line, word))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean lookForExactWord(String line, String[] ...wordsToLookFor) {
+        for (String[] words: wordsToLookFor) {
+            for (String word: words) {
+                if (containsExactWord(line, word))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsExactWord(String source, String subItem){
+        String pattern = "\\b"+subItem+"\\b";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(source);
+        return m.find();
     }
 
     private boolean lookLike(String word, String otherWord) {

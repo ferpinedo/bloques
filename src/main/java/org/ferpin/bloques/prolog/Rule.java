@@ -5,12 +5,30 @@ import java.util.ArrayList;
 public class Rule extends Clause {
     private ArrayList<Clause> bodyClauses;
 
+    public ArrayList<Clause> getBodyClauses() {
+        return bodyClauses;
+    }
+
+    public void setBodyClauses(ArrayList<Clause> bodyClauses) {
+        this.bodyClauses = bodyClauses;
+    }
+
+    public void addBodyClause(Clause bodyClause) {
+        this.bodyClauses.add(bodyClause);
+    }
+
+    public Rule() {
+        bodyClauses = new ArrayList<>();
+    }
+
     public Rule(String name) {
         super(name);
+        bodyClauses = new ArrayList<>();
     }
 
     public Rule(String name, String... variables) {
         super(name, variables);
+        bodyClauses = new ArrayList<>();
     }
 
     @Override
