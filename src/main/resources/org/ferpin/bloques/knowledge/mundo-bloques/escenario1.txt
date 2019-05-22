@@ -1,8 +1,25 @@
 # ESCENA INICIAL PARA ESCENARIO 1 #
 
+Existe un bloque A que es un cubo azul grande
+Existe un bloque B que es un cubo rojo mediano
+Existe un bloque C que es un caja chica amarilla
+el bloque D es un cilindro amarillo grande
+
+
 Existe un cubo azul grande sobre el piso.
 Arriba del cubo azul grande se encuentra el cubo rojo mediano
-Arriba del cubo rojo mediana esta una caja chica amarilla cerrada
+Arriba del cubo rojo mediano esta una caja chica amarilla
+
 Arriba de la caja chica amarilla no existen objetos
 Existe un cilindro amarillo grande sobre el piso
 Arriba del cilindro amarillo grande no existen objetos
+
+
+# SIMPLE STATEMENTS #
+
+# Existe un cubo azul grande sobre el piso.
+# el cubo rojo mediano esta sobre cubo azul grande
+# caja chica amarilla esta sobre el cubo rojo mediano
+# no existen objetos sobre la caja chica amarilla
+# Existe un cilindro amarillo grande sobre el piso
+# no existen objetos sobre el cilindro amarillo grande

@@ -10,6 +10,7 @@ import edu.stanford.nlp.util.CoreMap;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Properties;
 
 public class NLInterpreter {
@@ -60,7 +61,7 @@ public class NLInterpreter {
         return "";
     }
 
-    public static LinkedHashMap<String, String> cleanSentence(String originalText){
+    public static LinkedList<Token> cleanSentence(String originalText){
         System.out.println("ORIGINAL TEXT: " + originalText);
 
         Annotation document = new Annotation(originalText);
@@ -70,16 +71,16 @@ public class NLInterpreter {
         System.out.print("CLEANED TEXT: ");
         CoreMap sentence = document.get(CoreAnnotations.SentencesAnnotation.class).get(0);
 
-        LinkedHashMap<String, String> tokens = new LinkedHashMap<>();
+        LinkedList<Token> tokens = new LinkedList<>();
         for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
             String word = token.get(CoreAnnotations.TextAnnotation.class);
             String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
             if(isItWorth(word, posTag)) {
-                tokens.put(word, posTag);
+                tokens.add(new Token(word, posTag));
             }
         }
-        System.out.println(tokens.entrySet());
+        System.out.println(tokens);
 
         return tokens;
     }

@@ -2,9 +2,9 @@
 un bloque es una entidad
 
 # CARACTERÍSTICAS Y ESTADOS #
-una característica del bloque es que puede estar sobre una entidad.
-una característica del bloque es tener tamaño.
-otra característica es que los bloques pueden tener color
+Una característica del bloque es que puede estar sobre una entidad.
+Una característica del bloque es tener tamaño.
+Otra característica es que los bloques pueden tener color
 una característica del bloque es que puede ser un tipo de prisma
 
 # REGLAS #
@@ -22,39 +22,20 @@ Entonces
 #  QUITAR
 Si
     La orden es quitar el bloque Y del bloque X
-    El bloque Y está sobre el bloque X
+    El bloque Y está encima del bloque X
     El bloque Y no tiene nada sobre él
 Entonces
     Poner el bloque Y sobre el piso
     Sacar el bloque Y de X
 Si
     La orden es quitar el bloque Y del bloque X
-    El bloque Y está sobre del bloque X
-    El bloque Z está sobre del bloque Y
+    El bloque Y está arriba del bloque X
+    El bloque Z está encima del bloque Y
 Entonces
     Quitar bloque Z del bloque Y
     Quitar bloque Y de bloque X
 
-
 # COLOCAR
-# Si
-#     la orden es colocar bloque Y sobre bloque X
-#     no hay nada sobre el bloque Y
-#     no hay nada sobre el bloque x
-#     el bloque Y está sobre el piso
-# Entonces
-#     quitar bloque Y del piso
-#     poner bloque Y sobre X
-# Si
-#     la orden es colocar bloque Y sobre bloque X
-#     no hay nada sobre el bloque Y
-#     no hay nada sobre el bloque x
-#     el bloque Y está sobre la entidad Z
-#     la entidad Z no es el piso
-# Entonces
-#     quitar bloque Y de Z
-#     poner bloque Y sobre X
-
 Si
     la orden es colocar bloque Y sobre bloque X
     no hay nada sobre el bloque Y

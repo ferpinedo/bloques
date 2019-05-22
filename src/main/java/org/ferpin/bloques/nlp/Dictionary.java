@@ -1,23 +1,53 @@
 package org.ferpin.bloques.nlp;
 
-public class Dictionary {
-    public final static String[] EXCEPTIONS = {"de"};
+import java.util.HashMap;
 
-    public static final class Synonyms { //TODO: final HashMap<Concept ENUM, String[]>
-        public final static String[] THEN = {"entonces"};
-        public final static String[] NO = {"no"};
-        public final static String[] NOTHING = {"nada"};
-        public final static String[] FLOOR = {"piso"};
-        public final static String[] IF = {"si", "cuando"};
-        public final static String[] BE = {"ser", "estar", "tener", "es", "son"};
-        public final static String[] ENTITY = {"objeto", "entidad", "ente", "individuo"};
-        public final static String[] ATTACH = {"vincular", "ligar", "unir", "asociar", "enlazar", "relacionar",
-                "conectar"};
-        public final static String[] RULE = {"regla", "orden", "comando", "pauta", "estatuto", "precepto",
-                "instruccion", "mandato", "decreto"};
-        public final static String[] DETACH = {"desvincular", "desligar", "desunir", "separar", "desasociar", "desenlazar",
-                "relacionar", "desconectar"};
-        public final static String[] FEATURE = {"caracteristica", "caracteristicas", "estado", "estados", "propiedad",
-                "propiedades", "particularidad", "particularidades"};
+public final class Dictionary {
+    public static final HashMap<Concept, String[]> SYNONYMS = synonyms();
+
+    private static HashMap<Concept, String[]> synonyms() {
+        HashMap<Concept, String[]> map = new HashMap<>();
+        map.put(Concept.NO, new String[]{"no"});
+        map.put(Concept.PUT, new String[]{"poner"});
+        map.put(Concept.SET, new String[]{"colocar"});
+        map.put(Concept.QUIT, new String[]{"quitar"});
+        map.put(Concept.TAKEOUT, new String[]{"sacar"});
+        map.put(Concept.TYPE, new String[]{"tipo", "modelo", "patron"});
+        map.put(Concept.PRISM, new String[]{"prisma", "figura", "patron", "poliedro"});
+        map.put(Concept.THEN, new String[]{"entonces"});
+        map.put(Concept.NOTHING, new String[]{"nada", "vacio"});
+        map.put(Concept.BLOCK, new String[]{"bloque", "pieza"});
+        map.put(Concept.IF, new String[]{"si", "cuando"});
+        map.put(Concept.COLOR, new String[]{"color", "tinte", "tono"});
+        map.put(Concept.BE, new String[]{"ser", "estar", "tener", "es", "son", "existe"});
+        map.put(Concept.FLOOR, new String[]{"piso", "suelo", "tierra", "pavimento", "estrato"});
+        map.put(Concept.ABOVE, new String[]{"sobre", "arriba", "encima", "por encima", "por arriba", "superior"});
+        map.put(Concept.SIZE, new String[]{"tamano", "longitud", "dimensión", "volumen", "medida", "magnitud", "envergadura", "altura", "capacidad"});
+        map.put(Concept.ENTITY, new String[]{"objeto", "entidad", "ente", "individuo"});
+        map.put(Concept.ATTACH, new String[]{"vincular", "ligar", "unir", "asociar", "enlazar", "relacionar", "conectar"});
+        map.put(Concept.RULE, new String[]{"regla", "orden", "comando", "pauta", "estatuto", "precepto", "instruccion", "mandato", "decreto"});
+        map.put(Concept.DETACH, new String[]{"desvincular", "desligar", "desunir", "separar", "desasociar", "desenlazar", "relacionar", "desconectar"});
+        map.put(Concept.FEATURE, new String[]{"caracteristica", "caracteristicas", "estado", "estados", "propiedad", "propiedades", "particularidad", "particularidades"});
+        return map;
+    }
+
+
+    public static final HashMap<Concept, String[]> CATEGORIES = categories();
+
+    private static HashMap<Concept, String[]> categories() {
+        HashMap<Concept, String[]> map = new HashMap<>();
+        map.put(Concept.EXCEPTIONS, new String[]{"de"});
+        map.put(Concept.PRISM, new String[] {"cubo", "piramide", "cilindro", "esfera", "cono", "piramide cuadrada",
+                "prisma hexagonal", "prisma triangular", "prisma rectangular", "tetraedro",
+                "caja"});
+        map.put(Concept.SIZE, new String[] {"enorme", "inmenso","inmensa", "grande", "alto", "largo","alta", "larga", "mayusculo", "mediano", "mayuscula", "mediana",
+                "medio", "regular", "chico", "pequeno", "corto", "diminuto", "chica", "pequena", "corta", "diminuta"}); //from the biggest to the smallest);
+        map.put(Concept.COLOR, new String[] {"negro", "azul", "marron", "gris", "verde", "naranja", "rosa", "purpura",
+                "negra","roja", "blanca", "amarilla", "rojo", "blanco", "amarillo", "turquesa", "verde oliva", "verde menta",
+                "borgona", "lavanda", "magenta", "salmon", "cian", "beige", "rosado",
+                "verde oscuro", "verde oliva", "lila", "amarillo palido", "fucsia", "mostaza",
+                "ocre", "trullo", "malva", "purpura oscuro", "verde lima", "verde claro",
+                "ciruela", "azul claro", "melocoton", "violeta", "tan", "granate"});
+        return map;
     }
 }

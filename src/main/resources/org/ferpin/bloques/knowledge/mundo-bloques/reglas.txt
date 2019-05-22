@@ -3,7 +3,7 @@ un bloque es una entidad
 
 # CARACTERÍSTICAS Y ESTADOS #
 una característica del bloque es que puede estar sobre una entidad.
-una característica del bloque es tener tamaño.
+una propiedad del bloque es tener tamaño.
 otra característica es que los bloques pueden tener color
 una característica del bloque es que puede ser un tipo de prisma
 

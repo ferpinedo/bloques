@@ -1,26 +1,24 @@
 package org.ferpin.bloques.nlp;
 
-import javafx.collections.transformation.SortedList;
 import org.apache.commons.lang3.StringUtils;
-import org.ferpin.bloques.prolog.Clause;
-import org.ferpin.bloques.prolog.Predicate;
-import org.ferpin.bloques.prolog.PrologProgram;
-import org.ferpin.bloques.prolog.Rule;
+import org.ferpin.bloques.prolog.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+// TODO: caja cerrada... add YES-NO Property
 public class PrologTranslator {
-    private HashMap<Type, ArrayList<String>> learnedWords;
+    private HashMap<Type, ArrayList<Concept>> learnedConcepts;
 
-    private PrologProgram prologProgram;
+    private Program prologProgram;
 
-    public PrologTranslator(PrologProgram prologProgram) {
+    public PrologTranslator(Program prologProgram) {
         this.prologProgram = prologProgram;
-        this.learnedWords = new HashMap<>();
-        for (Type type: Type.values()) {
-            learnedWords.put(type, new ArrayList<String>());
+        this.learnedConcepts = new HashMap<>();
+        for (Type prologType : Type.values()) {
+            learnedConcepts.put(prologType, new ArrayList<>());
         }
     }
 
@@ -45,40 +43,177 @@ public class PrologTranslator {
         return preparedLines;
     }
 
+
+    private void parseFact(String line) {
+        StringBuilder predicateName = new StringBuilder();
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
+        System.out.print("TRANSLATING STAGE FACT: ");
+
+
+        Predicate predicate = null;
+        ArrayList<Entity> entities = new ArrayList<>();
+
+        ArrayList<String> properties = new ArrayList<>();
+
+        boolean correctOrder = false;
+        for (Token token: tokens) {
+//            System.out.println("evaluating token: " + token);
+            String word = token.getWord();
+            String posTag = token.getPosTag();
+
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.NOTHING), Dictionary.SYNONYMS.get(Concept.NO))) {
+                return;
+//                entities.add(new Entity("_"));
+//                continue;
+            }
+
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.FLOOR))) {
+                entities.add(new Entity(DictionaryUtils.getFirstSynonym(Concept.FLOOR)));
+                continue;
+            }
+
+
+            if (lookFor(word, getCategoryOptions(learnedConcepts.get(Type.PREDICATE).toArray(new Concept[0])))) { //TODO: identify category on same loop
+                properties.add(word);
+                Entity toEvaluateExistance = new Entity();
+                toEvaluateExistance.setProperties(properties);
+
+
+                for (Entity entity: prologProgram.getEntities()) {
+//                    System.out.println("Comparing " +toEvaluateExistance + " and " + entity);
+                    if (entity.equals(toEvaluateExistance)) {
+                        System.out.println("equal entity found");
+                        entities.add(new Entity(entity.getIdentifier()));
+                        properties.clear();
+                        break;
+                    }
+                }
+                continue;
+            }
+
+            if (lookFor(word, getConceptSynonyms(learnedConcepts.get(Type.PREDICATE).toArray(new Concept[0])))) {
+                predicate = prologProgram.getPredicates().stream().
+                        filter(predicate1 ->
+                                predicate1.getName().equals(DictionaryUtils.getFirstSynonym(findWordMeaning(word))))
+                        .findAny()
+                        .orElse(null);
+
+                correctOrder = entities.size() == 1;
+                System.out.println("Predicate found " + predicate);
+            }
+        }
+
+        Fact fact = new Fact(predicate);
+        System.out.println(entities);
+        if (correctOrder) {
+            fact.addArgument(entities.get(0).getIdentifier());
+            fact.addArgument(entities.get(1).getIdentifier());
+        } else {
+            fact.addArgument(entities.get(1).getIdentifier());
+            fact.addArgument(entities.get(0).getIdentifier());
+        }
+        System.out.println("   Result: " + fact);
+        prologProgram.addFact(fact);
+
+        System.out.println("\n");
+
+    }
+
+    // TODO: convert ArrayList to HashSet to avoid repetitions when adding learningConcepts.add(Type, Concept)
+
+    private void parseEntity(String line) {
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
+        System.out.print("TRANSLATING STAGE ENTITY: ");
+
+        Entity entity = new Entity();
+        ArrayList<Predicate> predicates = new ArrayList<>();
+
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
+
+            if (lookFor(word, getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))) {
+                entity.setType(DictionaryUtils.getFirstSynonym(findWordMeaning(word)));
+                System.out.println("Entity type " + entity.getType());
+                continue;
+            }
+
+            if (lookFor(word, getCategoryOptions(learnedConcepts.get(Type.PREDICATE).toArray(new Concept[0])))) { //TODO: identify category on same loop
+                Predicate predicate = prologProgram.getPredicates().stream().
+                        filter(predicate1 ->
+                                predicate1.getName().equals(DictionaryUtils.getFirstSynonym(findCategory(word))))
+                        .findAny()
+                        .orElse(null);
+                entity.addProperty(word);
+                predicates.add(predicate);
+
+                System.out.println("Entity type " + predicate);
+                continue;
+            }
+
+
+            if (lookFor(word,  Dictionary.SYNONYMS.get(Concept.BE), Dictionary.SYNONYMS.get(Concept.ENTITY), Dictionary.CATEGORIES.get(Concept.EXCEPTIONS),
+                    getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))
+                    || posTag.equals("AUX") || posTag.equals("PRON") || posTag.equals("VERB")) {
+                continue;
+            }
+
+            System.out.print("identifier: " + word + " ");
+            entity.setIdentifier(word);
+        }
+
+
+        prologProgram.addFact(new Fact(new Predicate(entity.getType(), 1), entity.getIdentifier()));
+
+        for (int i = 0; i < predicates.size(); i++) {
+            Fact fact = new Fact(predicates.get(i), entity.getIdentifier(), entity.getProperties().get(i));
+            System.out.println("  Result: " + fact);
+            prologProgram.addFact(fact);
+        }
+        prologProgram.addEntity(entity);
+
+        System.out.println("\n");
+
+    }
+
     private void identifyEntity(String line) {
 //        line = deleteWords(line, Dictionary.ENTITY);
-        HashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
-        for (Map.Entry<String, String> token: tokens.entrySet()) {
-            String word = token.getKey();
-            String posTag = token.getValue();
-            if (!posTag.equals("VERB") && !posTag.equals("ADP")  && !lookFor(word, Dictionary.Synonyms.ENTITY)) {
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
+
+            if (!posTag.equals("VERB") && !posTag.equals("ADP")  && !lookFor(word, Dictionary.SYNONYMS.get(Concept.ENTITY))) { //TODO: standardize exceptions (in this case type)
                 System.out.println("New entity found: " + word + "\n");
-                learnedWords.get(Type.ENTITY).add(word);
+                learnedConcepts.get(Type.ENTITY).add(findWordMeaning(word));
             }
         }
     }
 
-    private void translateState(String line) {
-        LinkedHashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
-        System.out.print("TRANSLATING STATE: ");
+    private void parsePredicate(String line) {
         StringBuilder predicateName = new StringBuilder();
-        for (Map.Entry<String, String> token: tokens.entrySet()) {
-            String word = token.getKey();
-            String posTag = token.getValue();
 
-            if (lookFor(word,  Dictionary.Synonyms.BE, Dictionary.Synonyms.ENTITY, Dictionary.EXCEPTIONS,
-                            learnedWords.get(Type.ENTITY).toArray(new String[0]))
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
+        System.out.print("TRANSLATING PREDICATE: ");
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
+
+
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.BE), Dictionary.SYNONYMS.get(Concept.ENTITY), Dictionary.CATEGORIES.get(Concept.EXCEPTIONS),
+                            getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))
                             || posTag.equals("AUX") || posTag.equals("PRON")) {
                 continue;
             }
 
-            if (lookFor(word, Dictionary.Synonyms.FEATURE))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.FEATURE), Dictionary.SYNONYMS.get(Concept.TYPE)))
                 continue;
 
             System.out.print(" " + word + "(" + posTag + ")");
 
-            predicateName.append(word);
-            learnedWords.get(Type.STATE).add(word);
+            Concept wordConcept = findWordMeaning(word);
+            learnedConcepts.get(Type.PREDICATE).add(wordConcept);
+            predicateName.append(DictionaryUtils.getFirstSynonym(wordConcept));
         }
         Predicate predicate = new Predicate(predicateName.toString(), 2); //TODO: Allow predicates of more atoms
         System.out.println("   RESULT: " + predicate + "\n");
@@ -86,24 +221,28 @@ public class PrologTranslator {
     }
 
     private void identfyRuleHeader(String line, Rule rule) {
-        LinkedHashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
-        System.out.print("TRANSLATING RULE HEADER: ");
         ArrayList<String> variables = new ArrayList<>();
-        for (Map.Entry<String, String> token: tokens.entrySet()) {
-            String word = token.getKey();
-            String posTag = token.getValue();
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
+        System.out.print("TRANSLATING RULE HEADER: ");
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
 
-            if (lookFor(word, Dictionary.Synonyms.BE, Dictionary.Synonyms.ENTITY, Dictionary.EXCEPTIONS,
-                    learnedWords.get(Type.ENTITY).toArray(new String[0]))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.BE), Dictionary.SYNONYMS.get(Concept.ENTITY), Dictionary.CATEGORIES.get(Concept.EXCEPTIONS),
+                    getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))
                     || posTag.equals("AUX") || posTag.equals("PRON")) {
                 continue;
             }
 
-            if (lookFor(word, Dictionary.Synonyms.RULE)|| posTag.equals("ADP"))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.RULE)) || posTag.equals("ADP"))
                 continue;
 
             if (posTag.equals("VERB")) {
-                rule.setName(word);
+                Concept wordConcept = findWordMeaning(word);
+                learnedConcepts.get(Type.PREDICATE).add(wordConcept);
+                String name = DictionaryUtils.getFirstSynonym(wordConcept);
+                rule.setName(name);
+
             } else {
                 variables.add(word.toUpperCase());
             }
@@ -111,47 +250,47 @@ public class PrologTranslator {
             System.out.print(" " + word + "(" + posTag + ")");
         }
         rule.setArguments(variables);
-        learnedWords.get(Type.RULE).add(rule.getName());
 
         System.out.println("   RESULT: " + rule.getName() + "\n");
     }
 
-    private void translateConditionPremise(String line, Rule rule) {
-        LinkedHashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
-        System.out.print("TRANSLATING RULE CONDITION: ");
+    private void parseConditionPremise(String line, Rule rule) {
         Clause clause = new Clause();
         PrologKey prologKey = null;
         ArrayList<String> variables = new ArrayList<>();
 
-        for (Map.Entry<String, String> token: tokens.entrySet()) {
-            String word = token.getKey();
-            String posTag = token.getValue();
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
+        System.out.print("TRANSLATING RULE CONDITION: ");
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
 
-            if (lookFor(word, Dictionary.Synonyms.NO)) {
+
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.NO))) {
                 prologKey = PrologKey.NOT;
                 continue;
             }
 
-            if (lookFor(word, Dictionary.Synonyms.NOTHING)) {
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.NOTHING))) {
                 variables.add(0, "_");
                 continue;
             }
 
 
-            if (lookFor(word, learnedWords.get(Type.STATE).toArray(new String[0]))) {  //TODO: also search synonyms of learned words !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (lookFor(word, getConceptSynonyms(learnedConcepts.get(Type.PREDICATE).toArray(new Concept[0])))) {  //TODO: also search synonyms of learned words !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 clause.setName(word);
                 continue;
             }
 
             // first filter
-            if (lookFor(word, Dictionary.Synonyms.BE, Dictionary.Synonyms.ENTITY, Dictionary.EXCEPTIONS,
-                    learnedWords.get(Type.ENTITY).toArray(new String[0]))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.BE), Dictionary.SYNONYMS.get(Concept.ENTITY), Dictionary.CATEGORIES.get(Concept.EXCEPTIONS),
+                    getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))
                     || posTag.equals("AUX") || posTag.equals("PRON")) {
                 continue;
             }
 
             // second filter
-            if (lookFor(word, Dictionary.Synonyms.RULE)|| posTag.equals("ADP") || posTag.equals("VERB"))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.RULE)) || posTag.equals("ADP") || posTag.equals("VERB"))
                 continue;
 
 //            if (lookForExactWord(word.toUpperCase(), rule.getArguments().toArray(new String[0]))) {
@@ -163,49 +302,50 @@ public class PrologTranslator {
         clause.setArguments(variables);
 
         if (prologKey != null) {
-            if (prologKey == PrologKey.NOT) {
+//            if (prologKey == PrologKey.NOT) {
                 clause = new Clause("not", clause.toString());
-            }
+//            }
         }
 
         System.out.println("   RESULT: " + clause.toString() + "\n");
         rule.addBodyClause(clause);
     }
 
-    private void translateAction(String line, Rule rule) {
-        LinkedHashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
+    private void parseAction(String line, Rule rule) {
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
         System.out.print("TRANSLATING RULE ACTION: ");
         Clause clause = new Clause();
         ArrayList<String> variables = new ArrayList<>();
-        for (Map.Entry<String, String> token: tokens.entrySet()) {
-            String word = token.getKey();
-            String posTag = token.getValue();
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
 
-            if (lookFor(word, Dictionary.Synonyms.FLOOR)) {
+
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.FLOOR))) {
                 variables.add("piso");
                 continue;
             }
 
             // first rules, are more important than states
-            if (lookFor(word, learnedWords.get(Type.RULE).toArray(new String[0]))) {
+            if (lookFor(word, getConceptSynonyms(learnedConcepts.get(Type.RULE).toArray(new Concept[0])))) {
                 clause.setName(word);
                 continue;
             }
 
-            if (lookFor(word, learnedWords.get(Type.STATE).toArray(new String[0])) && clause.getName() == null) {  //TODO: also search synonyms of learned words
+            if (lookFor(word, getConceptSynonyms(learnedConcepts.get(Type.PREDICATE).toArray(new Concept[0]))) && clause.getName() == null) {  //TODO: also search synonyms of learned words
                 clause.setName(word);
                 continue;
             }
 
             // first filter
-            if (lookFor(word, Dictionary.Synonyms.BE, Dictionary.Synonyms.ENTITY, Dictionary.EXCEPTIONS,
-                    learnedWords.get(Type.ENTITY).toArray(new String[0]))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.BE), Dictionary.SYNONYMS.get(Concept.ENTITY), Dictionary.CATEGORIES.get(Concept.EXCEPTIONS),
+                    getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))
                     || posTag.equals("AUX") || posTag.equals("PRON")) {
                 continue;
             }
 
             // second filter
-            if (lookFor(word, Dictionary.Synonyms.RULE)|| posTag.equals("ADP"))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.RULE)) || posTag.equals("ADP"))
                 continue;
 
 //            if (lookForExactWord(word, rule.getArguments().toArray(new String[0]))) {
@@ -219,46 +359,47 @@ public class PrologTranslator {
         rule.addBodyClause(clause);
     }
 
-    private void translatePrimitiveAction(String line, Rule rule) {
-        LinkedHashMap<String, String> tokens = NLInterpreter.cleanSentence(line);
+    private void parsePrimitiveAction(String line, Rule rule) {
+        LinkedList<Token> tokens = NLInterpreter.cleanSentence(line);
         System.out.print("TRANSLATING RULE PRIMITIVE  ACTION: ");
         Clause clause = new Clause();
         String innerClauseName = "";
         ArrayList<String> variables = new ArrayList<>();
         PrologKey key = null;
-        for (Map.Entry<String, String> token: tokens.entrySet()) {
-            String word = token.getKey();
-            String posTag = token.getValue();
+        for (Token token: tokens) {
+            String word = token.getWord();
+            String posTag = token.getPosTag();
 
-            if (lookFor(word, Dictionary.Synonyms.FLOOR)) { // TODO: also learn these words (floor and nothing)
+
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.FLOOR))) { // TODO: also learn these words (floor and nothing)
                 variables.add(0, "piso");
             }
 
-            if (lookFor(word, Dictionary.Synonyms.ATTACH)) {
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.ATTACH))) {
                 key = PrologKey.ATTACH;
                 clause.setName("assert");
                 continue;
             }
 
-            if (lookFor(word, Dictionary.Synonyms.DETACH)) {
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.DETACH))) {
                 key = PrologKey.DETACH;
                 clause.setName("retract");
                 continue;
             }
 
-            if (lookFor(word, learnedWords.get(Type.STATE).toArray(new String[0]))) {  //TODO: also search synonyms of learned words
+            if (lookFor(word, getConceptSynonyms(learnedConcepts.get(Type.PREDICATE).toArray(new Concept[0])))) {  //TODO: also search synonyms of learned words
                 innerClauseName = word;
             }
 
             // first filter
-            if (lookFor(word, Dictionary.Synonyms.BE, Dictionary.Synonyms.ENTITY, Dictionary.EXCEPTIONS,
-                    learnedWords.get(Type.ENTITY).toArray(new String[0]))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.BE), Dictionary.SYNONYMS.get(Concept.ENTITY), Dictionary.CATEGORIES.get(Concept.EXCEPTIONS),
+                    getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))
                     || posTag.equals("AUX") || posTag.equals("PRON")) {
                 continue;
             }
 
             // second filter
-            if (lookFor(word, Dictionary.Synonyms.RULE)|| posTag.equals("ADP"))
+            if (lookFor(word, Dictionary.SYNONYMS.get(Concept.RULE)) || posTag.equals("ADP"))
                 continue;
 
 //            System.out.println(rule.getArguments());
@@ -270,31 +411,30 @@ public class PrologTranslator {
         }
 
         if (key != null) {
-            if (key == PrologKey.ATTACH || key == PrologKey.DETACH) {
+//            if (key == PrologKey.ATTACH || key == PrologKey.DETACH)
                 clause.addArgument( (new Clause(innerClauseName, variables.toArray(new String[0]))).toString() );
-            }
         }
         System.out.println("   RESULT: " + clause.toString() + "\n");
         rule.addBodyClause(clause);
     }
 
 
-    //TODO: translateArithmeticOperation
-
+    //TODO: parseArithmeticOperation
+    //TODO: parseLogicOperation
     private void parseRule(Queue<String> lines) {
         boolean onActionSection = false;
         Rule rule = new Rule();
 
         while(!lines.isEmpty()) {
             String line = lines.peek();
-            if (lookFor(line, Dictionary.Synonyms.FEATURE) ||
-                    lookFor(line, Dictionary.Synonyms.IF)) {
+            if (lookFor(line, Dictionary.SYNONYMS.get(Concept.FEATURE)) ||
+                    lookFor(line, Dictionary.SYNONYMS.get(Concept.IF))) {
                 break;
             }
             lines.poll();
 
 //            Identify header
-            if (lookFor(line, Dictionary.Synonyms.RULE)) {
+            if (lookFor(line, Dictionary.SYNONYMS.get(Concept.RULE))) {
                 System.out.println("Header found!");
                 identfyRuleHeader(line, rule);
                 continue;
@@ -302,16 +442,16 @@ public class PrologTranslator {
 
 
             if (!onActionSection) {
-                if (lookFor(line, Dictionary.Synonyms.THEN)){
+                if (lookFor(line, Dictionary.SYNONYMS.get(Concept.THEN))){
                     onActionSection = true;
                     continue;
                 }
-                translateConditionPremise(line, rule);
+                parseConditionPremise(line, rule);
             } else {
-                if (lookFor(line, Dictionary.Synonyms.DETACH, Dictionary.Synonyms.ATTACH)) {
-                    translatePrimitiveAction(line, rule);
+                if (lookFor(line, Dictionary.SYNONYMS.get(Concept.DETACH), Dictionary.SYNONYMS.get(Concept.ATTACH))) {
+                    parsePrimitiveAction(line, rule);
                 } else {
-                    translateAction(line, rule);
+                    parseAction(line, rule);
                 }
             }
         }
@@ -331,18 +471,40 @@ public class PrologTranslator {
         while(!lines.isEmpty()) {
             String line = lines.poll();
 
-            if (lookFor(line, Dictionary.Synonyms.FEATURE)) {
-                translateState(line);
-            } else if (lookFor(line, Dictionary.Synonyms.ENTITY)) {
+            if (lookFor(line, Dictionary.SYNONYMS.get(Concept.FEATURE))) {
+                parsePredicate(line);
+            } else if (lookFor(line, Dictionary.SYNONYMS.get(Concept.ENTITY))) {
                 identifyEntity(line);
             }
 
-            if (lookFor(line, Dictionary.Synonyms.IF)) {
+            if (lookFor(line, Dictionary.SYNONYMS.get(Concept.IF))) {
                 parseRule(lines);
             }
         }
 
         System.out.println(prologProgram);
+    }
+
+    public void translateStage(String stageText) {
+        System.out.println("--------------------------------------------");
+        System.out.println("--------------------------------------------");
+        System.out.println("STAGE TRANSLATION BEGAN");
+
+        ArrayList<String> preparedLines = detectAndPrepareLines(stageText);
+        Queue<String> lines = new LinkedList<>(preparedLines);
+        while(!lines.isEmpty()) {
+            String line = lines.poll();
+
+            System.out.println("LINE: " + line);
+
+            if (lookFor(line, getConceptSynonyms(learnedConcepts.get(Type.ENTITY).toArray(new Concept[0])))) {
+                parseEntity(line);
+            } else {
+                parseFact(line);
+            }
+        }
+
+        System.out.println("PROGRAM WITH FACTS: \n" + prologProgram);
     }
 
     
@@ -375,6 +537,40 @@ public class PrologTranslator {
         }
         return false;
     }
+    
+    private String[] getConceptSynonyms(Concept ...concepts) {
+        ArrayList<String> synonyms = new ArrayList<>();
+        for (Concept concept: concepts) {
+            synonyms.addAll(Arrays.asList(Dictionary.SYNONYMS.get(concept)));
+        }
+        return synonyms.toArray(new String[0]);
+    }
+
+    private Concept findWordMeaning(String word) {
+        return Dictionary.SYNONYMS.entrySet()
+                .stream()
+                .filter(entry -> Arrays.asList(entry.getValue()).contains(word))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList()).get(0);
+    }
+
+    private String[] getCategoryOptions(Concept ...concepts) {
+        ArrayList<String> synonyms = new ArrayList<>();
+
+        for (Concept concept: concepts) {
+            if (Dictionary.CATEGORIES.containsKey(concept))
+                synonyms.addAll(Arrays.asList(Dictionary.CATEGORIES.get(concept)));
+        }
+        return synonyms.toArray(new String[0]);
+    }
+
+    private Concept findCategory(String word) {
+        return Dictionary.CATEGORIES.entrySet()
+                .stream()
+                .filter(entry -> Arrays.asList(entry.getValue()).contains(word))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList()).get(0);
+    }
 
 
 
@@ -385,12 +581,11 @@ public class PrologTranslator {
         return m.find();
     }
 
-    private boolean lookForExactword(String line, String ...wordsToLookFor) {
-        for (String word: wordsToLookFor) {
-            if (containsExactWord(line, word))
-                return true;
-        }
-        return false;
+    private boolean containsExactWord(String source, String subItem){
+        String pattern = "\\b"+subItem+"\\b";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(source);
+        return m.find();
     }
 
     private boolean lookForExactWord(String line, String[] ...wordsToLookFor) {
@@ -403,11 +598,12 @@ public class PrologTranslator {
         return false;
     }
 
-    private boolean containsExactWord(String source, String subItem){
-        String pattern = "\\b"+subItem+"\\b";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(source);
-        return m.find();
+    private boolean lookForExactword(String line, String ...wordsToLookFor) {
+        for (String word: wordsToLookFor) {
+            if (containsExactWord(line, word))
+                return true;
+        }
+        return false;
     }
 
     private boolean lookLike(String word, String otherWord) {
@@ -420,14 +616,13 @@ public class PrologTranslator {
                 similarLetters++;
             }
         }
-        double average = similarLetters/firstWord.length;
+        float average = ((float) similarLetters)/firstWord.length;
         return average > 5.0;
     }
 
     private String deleteWords(String line, String ...wordsToDelete) {
         String newText = line;
         for (String word: wordsToDelete) {
-//            newText = line.replaceAll("(?<!\\S)" + word + "(?!\\S)", "");
             newText = newText.replaceAll("(?<!\\S)" + word + "(?!\\S)", "");
         }
         return newText;

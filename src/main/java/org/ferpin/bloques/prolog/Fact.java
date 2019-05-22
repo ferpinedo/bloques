@@ -1,6 +1,7 @@
 package org.ferpin.bloques.prolog;
 
 public class Fact extends PredicateClause {
+
     public Fact(Predicate predicate) {
         super(predicate);
     }

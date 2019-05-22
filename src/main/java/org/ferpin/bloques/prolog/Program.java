@@ -1,29 +1,27 @@
 package org.ferpin.bloques.prolog;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class PrologProgram {
+public class Program {
     private String name;
     private String author;
     private ArrayList<Predicate> predicates;
     private ArrayList<Fact> facts;
     private ArrayList<Rule> rules;
+    private ArrayList<Entity> entities;
 
-    public PrologProgram(String name, String author) {
+    public Program(String name, String author) {
         this.name = name;
         this.author = author;
         this.predicates = new ArrayList<>();
         this.facts = new ArrayList<>();
         this.rules = new ArrayList<>();
+        this.entities = new ArrayList<>();
     }
 
-    public PrologProgram(String name, String author, ArrayList<Predicate> predicates, ArrayList<Fact> facts, ArrayList<Rule> rules) {
-        this.name = name;
-        this.author = author;
-        this.predicates = predicates;
-        this.facts = facts;
-        this.rules = rules;
-    }
 
     public String getAuthor() {
         return author;
@@ -65,6 +63,14 @@ public class PrologProgram {
         this.rules = rules;
     }
 
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(ArrayList<Entity> entities) {
+        this.entities = entities;
+    }
+
     public void addPredicate(Predicate predicate) {
         this.predicates.add(predicate);
     }
@@ -75,6 +81,10 @@ public class PrologProgram {
 
     public void addRule(Rule rule) {
         this.rules.add(rule);
+    }
+
+    public void addEntity(Entity entity) {
+        this.entities.add(entity);
     }
 
     @Override
@@ -95,5 +105,17 @@ public class PrologProgram {
             program.append(rule).append("\n");
 
         return program.toString();
+    }
+
+    public void consult() throws IOException {
+        saveProgram();
+        Puppeteer.consult("rules.pl");
+    }
+
+    private void saveProgram() throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("rules.pl"));
+        writer.write(this.toString());
+
+        writer.close();
     }
 }
