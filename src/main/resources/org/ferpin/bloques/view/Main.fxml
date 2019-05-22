@@ -54,7 +54,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="120.0" prefHeight="36.0" prefWidth="535.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <JFXTextField fx:id="txtCommand" focusColor="#40a877" prefHeight="27.0" prefWidth="387.0" promptText="Comando" />
+            <JFXTextField fx:id="txtCommand" focusColor="#40a877" prefHeight="27.0" prefWidth="387.0" promptText="Comando" HBox.hgrow="ALWAYS" />
             <JFXButton defaultButton="true" onAction="#handleSend" prefHeight="38.0" prefWidth="103.0" ripplerFill="#a49d9d" style="-fx-border-radius: 5; -fx-background-color: #eaeaea; -fx-background-radius: 5; -fx-border-width: 0.5; -fx-text-fill: #40a877 #40a877;" text="ENVIAR">
                <font>
                   <Font name="Arial Black" size="13.0" />

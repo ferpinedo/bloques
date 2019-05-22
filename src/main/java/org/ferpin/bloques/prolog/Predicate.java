@@ -9,6 +9,13 @@ public class Predicate {
         return ":-dynamic " + name + "/" + size + ".";
     }
 
+    public Predicate() {
+    }
+
+    public Predicate(String name) {
+        this.name = name;
+    }
+
     public Predicate(String name, int size) {
         this.name = name;
         this.size = size;

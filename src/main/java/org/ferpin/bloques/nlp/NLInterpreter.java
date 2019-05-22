@@ -8,8 +8,6 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Properties;
 
@@ -53,7 +51,7 @@ public class NLInterpreter {
             String word = token.get(CoreAnnotations.TextAnnotation.class);
             String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
-            if(isItWorth(word, pos))
+            if(isWorth(word, pos))
                 System.out.print(word + " (" + pos + "), ");
         }
         System.out.println("\n");
@@ -76,7 +74,7 @@ public class NLInterpreter {
             String word = token.get(CoreAnnotations.TextAnnotation.class);
             String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
-            if(isItWorth(word, posTag)) {
+            if(isWorth(word, posTag)) {
                 tokens.add(new Token(word, posTag));
             }
         }
@@ -85,8 +83,33 @@ public class NLInterpreter {
         return tokens;
     }
 
-    private static boolean isItWorth(String word, String pos) {
+    public static LinkedList<Token> tokenizeSentence(String originalText){
+        System.out.println("ORIGINAL TEXT: " + originalText);
+
+        Annotation document = new Annotation(originalText);
+        corenlp.annotate(document);
+
+
+        System.out.print("TOKENIZED SENTENCE: ");
+        CoreMap sentence = document.get(CoreAnnotations.SentencesAnnotation.class).get(0);
+
+        LinkedList<Token> tokens = new LinkedList<>();
+        for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+            String word = token.get(CoreAnnotations.TextAnnotation.class);
+            String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+            tokens.add(new Token(word, posTag));
+
+        }
+        System.out.println(tokens);
+
+        return tokens;
+    }
+
+    private static boolean isWorth(String word, String pos) {
         if (word.length() == 1 && !pos.equals("PUNCT")) // exceptions: words of one letter as "a", "y", "u", ...
+            return true;
+
+        if (word.equals("?"))
             return true;
 
 //        && !pos.equals("ADP")

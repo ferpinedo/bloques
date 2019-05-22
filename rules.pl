@@ -32,10 +32,12 @@ sobre(d,piso).
 
 % Rules
 poner(X,Y):-
-assert(sobre(X,Y)).
+assert(sobre(X,Y)),
+write(' poniendo '),write(X),write(' sobre '),write(Y).
 
 sacar(X,Z):-
-retract(sobre(X,Z)).
+retract(sobre(X,Z)),
+write(' quitando '),write(X),write(' de '),write(Z).
 
 quitar(Y,X):-
 sobre(Y,X),

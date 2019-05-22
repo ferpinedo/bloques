@@ -9,8 +9,8 @@ public final class Dictionary {
         HashMap<Concept, String[]> map = new HashMap<>();
         map.put(Concept.NO, new String[]{"no"});
         map.put(Concept.PUT, new String[]{"poner"});
-        map.put(Concept.SET, new String[]{"colocar"});
-        map.put(Concept.QUIT, new String[]{"quitar"});
+        map.put(Concept.SET, new String[]{"colocar", "coloca", "sube", "subir"});
+        map.put(Concept.QUIT, new String[]{"quitar", "quita", "remover", "remueve"});
         map.put(Concept.TAKEOUT, new String[]{"sacar"});
         map.put(Concept.TYPE, new String[]{"tipo", "modelo", "patron"});
         map.put(Concept.PRISM, new String[]{"prisma", "figura", "patron", "poliedro"});
@@ -19,6 +19,7 @@ public final class Dictionary {
         map.put(Concept.BLOCK, new String[]{"bloque", "pieza"});
         map.put(Concept.IF, new String[]{"si", "cuando"});
         map.put(Concept.COLOR, new String[]{"color", "tinte", "tono"});
+        map.put(Concept.WRITE, new String[]{"escribir", "mostrar", "enseñar"});
         map.put(Concept.BE, new String[]{"ser", "estar", "tener", "es", "son", "existe"});
         map.put(Concept.FLOOR, new String[]{"piso", "suelo", "tierra", "pavimento", "estrato"});
         map.put(Concept.ABOVE, new String[]{"sobre", "arriba", "encima", "por encima", "por arriba", "superior"});
@@ -37,6 +38,7 @@ public final class Dictionary {
     private static HashMap<Concept, String[]> categories() {
         HashMap<Concept, String[]> map = new HashMap<>();
         map.put(Concept.EXCEPTIONS, new String[]{"de"});
+        map.put(Concept.QUESTIONS, new String[]{"que", "cuando", "donde", "por que", "cual", "porque", "quien", "como"});
         map.put(Concept.PRISM, new String[] {"cubo", "piramide", "cilindro", "esfera", "cono", "piramide cuadrada",
                 "prisma hexagonal", "prisma triangular", "prisma rectangular", "tetraedro",
                 "caja"});

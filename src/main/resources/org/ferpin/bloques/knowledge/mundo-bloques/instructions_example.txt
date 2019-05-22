@@ -1,0 +1,24 @@
+que hay arriba de a?
+¿qué hay arriba de a?
+¿dónde está a?
+¿sobre qué bloque está b?
+¿qué hay sobre el bloque a?
+sobre qué bloque está a?
+sobre qué bloque está b?
+
+colocar a sobre b
+quitar a de b
+colca a sobre b
+quita a de b
+
+
+
+
+agregar
+
+Existe un bloque C que es un caja chica amarilla
+el bloque D es un cilindro amarillo grande
+
+
+Existe un cubo azul grande sobre el piso.
+Arriba del cubo azul grande se encuentra el cubo rojo mediano

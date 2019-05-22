@@ -12,11 +12,14 @@ una característica del bloque es que puede ser un tipo de prisma
      La orden es Poner bloque X sobre entidad Y
  Entonces
      Vincular bloque X sobre entidad Y
+     Escribir poniendo X sobre Y
+
 
 Si
     La orden es Sacar bloque X de entidad Z
 Entonces
     Desvincular bloque X de la entidad Z sobre la que está puesto
+    Escribir quitando X de Z
 
 
 #  QUITAR
