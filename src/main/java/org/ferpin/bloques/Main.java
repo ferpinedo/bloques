@@ -4,9 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.ferpin.bloques.prolog.Puppeteer;
-
 import java.net.URL;
 
 public class Main extends Application {
@@ -20,7 +19,9 @@ public class Main extends Application {
 //        System.out.println("Read lines: " + Puppeteer.run("loadRules", getClass().getResource("rulesEnfermedadesUno.txt").getPath()));
 //        Puppeteer.run("initRules");
 
-        primaryStage.setTitle("Sistema Experto");
+        primaryStage.setTitle("Sistema Basado en Conocimiendo");
+        primaryStage.getIcons().add(new Image( Main.class.getResource("icon/brain.png").toExternalForm() ));
+
         URL url = Main.class.getResource("view/Main.fxml");
         FXMLLoader fxmlLoader = new FXMLLoader(url);
         Parent parent = fxmlLoader.load();

@@ -3,7 +3,6 @@ package org.ferpin.bloques.nlp;
 import org.apache.commons.lang3.StringUtils;
 import org.ferpin.bloques.prolog.*;
 
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
