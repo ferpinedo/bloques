@@ -1,14 +1,13 @@
-# REGLAS DE COMPILADOR #
+# REGLAS DE TRADUCTOR #
 
 CONCEPTOS CLAVES: orden, Si, Entonces, entidad, cualquiera(_)
 #  piso, nada, vacío
 
 Agregar relación: relacionar, unir enlazar, vincular, conectar -> assert
 Eliminar relación: separar, desligar, desvincular, desconectar -> retract
+Escribir, mostrar -> writeln
 
 Entidad -> Variables (X, Y, Z, ...)
-
-:-dynamic objeto/1 ¿sí será necesario?
 
 Las únicas operaciones son operaciones aritméticas y vincular y disvincular relaciones
 

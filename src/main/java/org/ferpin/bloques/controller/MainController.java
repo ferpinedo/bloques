@@ -98,7 +98,7 @@ public class MainController {
 
 //        try {
             String prologQuery = translator.translateCommand(command);
-            System.out.println("Executing " + prologQuery + "   ....");
+            System.out.println("Executing " + prologQuery);
             Puppeteer.simpleQuery2(prologQuery);
 //        } catch (Exception e) {
 //            System.out.println("Texto incorrecto, asegúrate de escribir una instrucción válida");
@@ -137,27 +137,27 @@ public class MainController {
 //        System.setErr(console.getOut());
 
 
-//        System.setOut(new PrintStream(new OutputStream()
-//        {
-//            @Override
-//            public void write(int b) throws IOException
-//            {
-//                if (b == '\r')
-//                {
-//                    return;
-//                }
-//                if (b == '\n')
-//                {
-//                    final String text = STR_BUFFER.toString() + NEW_LINE;
-//                    appendTextArea(text);
-//                    STR_BUFFER.setLength(0);
-//                }
-//                else
-//                {
-//                    STR_BUFFER.append((char) b);
-//                }
-//            }
-//        }, true));
+        System.setOut(new PrintStream(new OutputStream()
+        {
+            @Override
+            public void write(int b) throws IOException
+            {
+                if (b == '\r')
+                {
+                    return;
+                }
+                if (b == '\n')
+                {
+                    final String text = STR_BUFFER.toString() + NEW_LINE;
+                    appendTextArea(text);
+                    STR_BUFFER.setLength(0);
+                }
+                else
+                {
+                    STR_BUFFER.append((char) b);
+                }
+            }
+        }, true));
 
     }
     private final StringBuilder STR_BUFFER = new StringBuilder();
